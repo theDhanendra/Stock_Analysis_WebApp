@@ -4,6 +4,8 @@ import yfinance as yf
 import datetime
 import plotly.express as px
 from pages.utils import capm_functions
+from pages.utils.patched_lib.squeeze_pro import squeeze_pro
+
 
 def main():
     st.set_page_config(page_title="CAPM", page_icon="📈", layout="wide")

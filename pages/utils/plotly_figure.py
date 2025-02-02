@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 import pandas_ta as pta
 from dateutil.relativedelta import relativedelta
+from pages.utils.patched_lib.squeeze_pro import squeeze_pro
 
 def plotly_table(dataframe):
     """

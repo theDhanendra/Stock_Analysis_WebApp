@@ -2,6 +2,8 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from scipy.stats import linregress
+from pages.utils.patched_lib.squeeze_pro import squeeze_pro
+
 
 def interactive_plot(df):
     """
