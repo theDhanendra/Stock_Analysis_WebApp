@@ -42,7 +42,7 @@ streamlit run Market_Insights.py
 ```
 
 ## 🌍 Live Demo
-🔗 **Try the Live App:** [Stock Analysis Web App]([https://your-streamlit-app-link.com](https://stock-analysis-webapp-by-dhanendra.streamlit.app/))  
+🔗 **Try the Live App:** [Stock Analysis Web App](https://stock-analysis-webapp-by-dhanendra.streamlit.app/)
 
 You can access the fully deployed **Stock Analysis & Forecasting App** on Streamlit. Explore real-time stock data, visualize market trends, and forecast future stock prices with ease.  
 
