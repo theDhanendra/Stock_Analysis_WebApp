@@ -4,6 +4,9 @@ import streamlit as st
 import yfinance as yf
 from dotenv import load_dotenv
 
+os.system('sh /mount/src/stock_analysis_webapp/modify_squeeze_pro.sh')
+
+
 # Set Page Config
 st.set_page_config(
     page_title="Investment Portal",
