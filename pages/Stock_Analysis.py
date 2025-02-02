@@ -4,6 +4,7 @@ import yfinance as yf
 import plotly.graph_objects as go
 import datetime
 import ta
+from pages.utils.patched_lib.squeeze_pro import squeeze_pro
 from pages.utils.plotly_figure import plotly_table, close_chart, candlestick, RSI, Moving_average, MACD
 
 # Setting page config
