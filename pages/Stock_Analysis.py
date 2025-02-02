@@ -5,6 +5,8 @@ import plotly.graph_objects as go
 import datetime
 import ta
 from pages.utils.plotly_figure import plotly_table, close_chart, candlestick, RSI, Moving_average, MACD
+from pandas_ta.momentum.squeeze_pro import squeeze_pro
+
 
 # Setting page config
 st.set_page_config(
