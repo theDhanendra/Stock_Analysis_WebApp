@@ -2,7 +2,6 @@ import streamlit as st
 from pages.utils.model_train import get_data, get_rolling_mean, get_differencing_order, scaling, evaluate_model, get_forecast, inverse_scaling  
 import pandas as pd  
 from pages.utils.plotly_figure import plotly_table, Moving_average_forecast  
-from pages.utils.patched_lib.squeeze_pro import squeeze_pro
 
 st.set_page_config(  
     page_title="Stock Prediction",  
