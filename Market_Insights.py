@@ -21,7 +21,7 @@ def display_header():
 load_dotenv() 
 API_KEY = os.getenv("NEWS_API_KEY")
 
-# ✅ Cache News API data to avoid multiple requests
+# Cache News API data to avoid multiple requests
 @st.cache_data
 def fetch_news_ticker():
     url = f"https://newsapi.org/v2/top-headlines?category=business&language=en&apiKey={API_KEY}"
@@ -101,7 +101,7 @@ def display_services():
     st.markdown("---")
 
 
-# ✅ Cache stock data to avoid multiple API calls
+# Cache stock data to avoid multiple API calls
 @st.cache_data
 def fetch_featured_stocks():
     tickers = ["TSLA", "AAPL", "AMZN"]
