@@ -7,36 +7,39 @@ from dotenv import load_dotenv
 # Set Page Config
 st.set_page_config(
     page_title="Investment Portal",
-    page_icon="chart_with_upwards_trend",
+    page_icon="📈",
     layout="wide"
 )
 
 def display_header():
-    st.title("Welcome to the Ultimate Investment Portal :chart_with_upwards_trend:")
+    st.title("Welcome to the Ultimate Investment Portal 📈")
     st.subheader("Empowering Your Investment Journey with Real-Time Insights and Tools")
     st.image("app.jpg")
-
     st.markdown("---")
 
 # Load API Key from .env file
 load_dotenv() 
 API_KEY = os.getenv("NEWS_API_KEY")
 
+# ✅ Cache News API data to avoid multiple requests
+@st.cache_data
 def fetch_news_ticker():
     url = f"https://newsapi.org/v2/top-headlines?category=business&language=en&apiKey={API_KEY}"
     response = requests.get(url)
     if response.status_code == 200:
-        news = response.json()["articles"]
-        news_items = []
-        for article in news[:6]:  # Limiting to 6 articles for a 2x3 collage
-            title = article['title']
-            url = article['url']
-            thumbnail = article['urlToImage']
-            description = article['description'] if article['description'] else ""
-            date = article['publishedAt'][:10]  # Extracting the date (YYYY-MM-DD)
-            news_items.append((title, url, thumbnail, description, date))
+        news = response.json().get("articles", [])
+        news_items = [
+            (
+                article.get("title", "No Title"),
+                article.get("url", "#"),
+                article.get("urlToImage", ""),
+                article.get("description", ""),
+                article.get("publishedAt", "")[:10]  # YYYY-MM-DD
+            )
+            for article in news[:6]  # Limiting to 6 articles
+        ]
         return news_items
-    return 
+    return []
 
 def display_news_ticker():
     st.markdown("### Latest Financial News 📰")
@@ -50,15 +53,15 @@ def display_news_ticker():
                     st.markdown(
                         f"""
                         <div style="border:2px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
-                            <img src="{thumbnail}" width="300" style="float:right; margin-right:15px; border-radius:5px;">
+                            <img src="{thumbnail}" width="300" style="border-radius:5px;">
                             <h4><a href="{url}" target="_blank">{title}</a></h4>
-                            <br>Date: <em>{date}</em></br>
+                            <p><em>{date}</em></p>
                             <p>{description}</p>
                         </div>
                         """, unsafe_allow_html=True
                     )
     else:
-        st.markdown("No news available at the moment.")
+        st.warning("No news available at the moment.")
 
     st.markdown("---")
 
@@ -90,74 +93,51 @@ def display_services():
             "description": "Stay updated with the latest market trends, news, and insights. Access real-time data and analysis to make well-informed investment choices.",
             "icon": "🌐"
         },
-        {
-            "title": "Portfolio Management",
-            "description": "Manage your investment portfolio with ease. Monitor performance, assess risk, and optimize your holdings for maximum returns.",
-            "icon": "📁"
-        }
     ]
-
     for service in services:
-        st.markdown(f"#### {service['icon']} {service['title']} :")
-        st.write(f"##### {service['description']}")
+        st.markdown(f"#### {service['icon']} {service['title']}")
+        st.markdown(f"{service['description']}")
 
     st.markdown("---")
 
+
+# ✅ Cache stock data to avoid multiple API calls
+@st.cache_data
 def fetch_featured_stocks():
-    # List of tickers to fetch
-    tickers = ['TSLA', 'AAPL', 'AMZN']
-    trending_stocks = yf.Tickers(tickers)
-    stock_data = trending_stocks.history(period='1d')
+    tickers = ["TSLA", "AAPL", "AMZN"]
+    stock_data = yf.download(tickers, period="1d")["Close"]
 
     featured_stocks = {}
     for ticker in tickers:
-        close_price = stock_data['Close'][ticker].iloc[0]
+        close_price = stock_data[ticker].iloc[0] if ticker in stock_data else "N/A"
         stock_info = yf.Ticker(ticker).info
-        short_description = stock_info.get('shortName', 'No description available')
-        market_cap = f"{stock_info.get('marketCap', 'N/A'):,}"  # Adding commas
-        volume = f"{stock_info.get('volume', 'N/A'):,}"  # Adding commas
-        more_info_url = f"https://finance.yahoo.com/quote/{ticker}"
-
         featured_stocks[ticker] = {
-            'price': f"{close_price:.2f}",
-            'description': short_description,
-            'market_cap': market_cap,
-            'volume': volume,
-            'url': more_info_url
+            "price": f"${close_price:.2f}" if close_price != "N/A" else "N/A",
+            "description": stock_info.get("shortName", "No description available"),
+            "market_cap": f"{stock_info.get('marketCap', 'N/A'):,}" if stock_info.get("marketCap") else "N/A",
+            "volume": f"{stock_info.get('volume', 'N/A'):,}" if stock_info.get("volume") else "N/A",
+            "url": f"https://finance.yahoo.com/quote/{ticker}",
         }
-
     return featured_stocks
 
 def display_featured_stocks():
     st.markdown("### Featured Stocks 🏆")
     featured_stocks = fetch_featured_stocks()
-    # Creating a single row with three columns for featured stocks
-    cols = st.columns(3)
-    for col, (stock, info) in zip(cols, featured_stocks.items()):
+    cols = st.columns(len(featured_stocks))  # Dynamic columns
+    for col, (ticker, info) in zip(cols, featured_stocks.items()):
         col.markdown(
             f"""
             <div style="border:2px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
-                <h4>{stock} - {info['description']}</h4>
-                <table style="width:100%">
-                    <tr>
-                        <td><strong>Current Price:</strong></td>
-                        <td>${info['price']}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Market Cap:</strong></td>
-                        <td>${info['market_cap']}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Volume:</strong></td>
-                        <td>{info['volume']}</td>
-                    </tr>
-                </table>
+                <h4>{ticker} - {info['description']}</h4>
+                <p><strong>Current Price:</strong> {info['price']}</p>
+                <p><strong>Market Cap:</strong> {info['market_cap']}</p>
+                <p><strong>Volume:</strong> {info['volume']}</p>
                 <a href="{info['url']}" target="_blank">More Info</a>
             </div>
             """, unsafe_allow_html=True
         )
     st.markdown("---")
-    
+
 def display_footer():
     st.markdown("---")
     st.markdown("### Explore More")

@@ -3,6 +3,13 @@ import datetime
 import pandas as pd
 import pandas_ta as pta
 from dateutil.relativedelta import relativedelta
+import plotly.express as px
+
+def plot_stock_chart(df):
+    sampled_df = df.iloc[::5]  # Every 5th data point
+    fig = px.line(sampled_df, x=sampled_df.index, y="Close")
+    return fig
+
 
 def plotly_table(dataframe):
     """

@@ -38,7 +38,7 @@ def get_user_input():
      'PAYC', 'MCO', 'SPGI', 'UNH', 'MDLZ', 'DHR', 'TROW', 'NOW', 'LRCX', 'ATVI', 'CHKP', 'WBA',  
      'SYK', 'TMO', 'ISRG', 'ADP', 'AON', 'NDAQ'], ['TSLA', 'AAPL', 'AMZN'])
     with col2:
-        year = st.number_input("Number of years", 1, 10)
+        year = st.number_input("Number of years", 1, 20)
     return stocks_list, year
 
 def download_data(stocks_list, year):

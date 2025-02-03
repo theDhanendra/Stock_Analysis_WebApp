@@ -9,13 +9,24 @@ st.set_page_config(
     layout="wide",  
 )  
 
-st.title("Stock Prediction")  
+st.title("📈 Stock Prediction")  
 col1, col2, col3 = st.columns(3)  
 
 with col1:  
     ticker = st.text_input('Stock Ticker', 'AAPL')  
 
 rmse = 0  
+
+@st.cache_data
+def fetch_stock_data(ticker):
+    return get_data(ticker)
+
+@st.cache_resource
+def train_and_forecast(scaled_data, differencing_order, scaler):
+    rmse = evaluate_model(scaled_data, differencing_order)
+    forecast = get_forecast(scaled_data, differencing_order)
+    forecast["Close"] = inverse_scaling(scaler, forecast["Close"])
+    return rmse, forecast
 
 try:
     st.subheader('Predicting Next 30 days Close Price for: ' + ticker)  

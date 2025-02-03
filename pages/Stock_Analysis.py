@@ -5,8 +5,12 @@ import plotly.graph_objects as go
 import datetime
 import ta
 from pages.utils.plotly_figure import plotly_table, close_chart, candlestick, RSI, Moving_average, MACD
-from pandas_ta.momentum.squeeze_pro import squeeze_pro
 
+
+@st.cache_data
+def get_stock_data(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.history(period="1y")
 
 # Setting page config
 st.set_page_config(
@@ -28,6 +32,11 @@ def get_user_inputs():
     with col3:
         end_date = st.date_input("Choose End Date", datetime.date(today.year, today.month, today.day))
     return ticker, start_date, end_date
+
+
+def get_stock_info(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.info
 
 def display_stock_info(ticker):
     stock = yf.Ticker(ticker)
@@ -51,6 +60,7 @@ def display_metrics(stock):
         fig_df = plotly_table(df)
         st.plotly_chart(fig_df, use_container_width=True)
 
+@st.cache_data
 def fetch_stock_data(ticker, start_date, end_date):
     with st.spinner("Fetching stock data..."):
         data = yf.download(ticker, start=start_date, end=end_date)
@@ -115,6 +125,8 @@ data = fetch_stock_data(ticker, start_date, end_date)
 display_daily_change(data)
 display_historical_data(data)
 num_period = get_selected_period()
+
+
 col1, col2, col3 = st.columns([1,1,4])
 with col1:
     chart_type = st.selectbox('',('Candle','Line'))
